@@ -261,8 +261,32 @@ public:
 
         void OnPlayerEnter(Player* player) override
         {
-            if (TeamIdInInstance == TEAM_NEUTRAL)
-                TeamIdInInstance = player->GetTeamId();
+            if (TeamIdInInstance == TEAM_NEUTRAL) {
+                if (!player->GetGroup()) {
+                    TeamIdInInstance = player->GetTeamId();
+                    if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                        player->SetFactionForRace(player->getRace());
+                    }
+                } else {
+                    // Handle group logic
+                    Player* leader = ObjectAccessor::FindPlayer(player->GetGroup()->GetLeaderGUID());
+                    if (leader) {
+                        TeamIdInInstance = leader->GetTeamId();
+                        if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                            player->SetFaction(leader->GetFaction());
+                        }
+                    } else {
+                        // Fallback to character cache if leader is not online
+                        CharacterCacheEntry const* playerData = sCharacterCache->GetCharacterCacheByGuid(player->GetGroup()->GetLeaderGUID());
+                        if (playerData) {
+                            TeamIdInInstance = Player::TeamIdForRace(playerData->Race);
+                            if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                player->SetFaction(Player::TeamIdForRace(playerData->Race));
+                            }
+                        }
+                    }
+                }
+            }
 
             // for professor putricide hc
             DoRemoveAurasDueToSpellOnPlayers(SPELL_GAS_VARIABLE);
@@ -299,8 +323,32 @@ public:
             {
                 Map::PlayerList const& players = instance->GetPlayers();
                 if (!players.IsEmpty())
-                    if (Player* player = players.begin()->GetSource())
-                        TeamIdInInstance = player->GetTeamId();
+                    if (Player* player = players.begin()->GetSource()) {
+                        if (!player->GetGroup()) {
+                            TeamIdInInstance = player->GetTeamId();
+                            if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                player->SetFactionForRace(player->getRace());
+                            }
+                        } else {
+                            // Handle group logic
+                            Player* leader = ObjectAccessor::FindPlayer(player->GetGroup()->GetLeaderGUID());
+                            if (leader) {
+                                TeamIdInInstance = leader->GetTeamId();
+                                if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                    player->SetFaction(leader->GetFaction());
+                                }
+                            } else {
+                                // Fallback to character cache if leader is not online
+                                CharacterCacheEntry const* playerData = sCharacterCache->GetCharacterCacheByGuid(player->GetGroup()->GetLeaderGUID());
+                                if (playerData) {
+                                    TeamIdInInstance = Player::TeamIdForRace(playerData->Race);
+                                    if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                        player->SetFaction(Player::TeamIdForRace(playerData->Race));
+                                    }
+                                }
+                            }
+                        }
+                    }
             }
 
             // apply ICC buff to pets/summons
@@ -537,6 +585,7 @@ public:
             }
 
             InstanceScript::OnCreatureCreate(creature);
+
         }
 
         void OnCreatureRemove(Creature* creature) override
@@ -553,8 +602,32 @@ public:
             {
                 Map::PlayerList const& players = instance->GetPlayers();
                 if (!players.IsEmpty())
-                    if (Player* player = players.begin()->GetSource())
-                        TeamIdInInstance = player->GetTeamId();
+                    if (Player* player = players.begin()->GetSource()) {
+                        if (!player->GetGroup()) {
+                            TeamIdInInstance = player->GetTeamId();
+                            if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                player->SetFactionForRace(player->getRace());
+                            }
+                        } else {
+                            // Handle group logic
+                            Player* leader = ObjectAccessor::FindPlayer(player->GetGroup()->GetLeaderGUID());
+                            if (leader) {
+                                TeamIdInInstance = leader->GetTeamId();
+                                if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                    player->SetFaction(leader->GetFaction());
+                                }
+                            } else {
+                                // Fallback to character cache if leader is not online
+                                CharacterCacheEntry const* playerData = sCharacterCache->GetCharacterCacheByGuid(player->GetGroup()->GetLeaderGUID());
+                                if (playerData) {
+                                    TeamIdInInstance = Player::TeamIdForRace(playerData->Race);
+                                    if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                        player->SetFaction(Player::TeamIdForRace(playerData->Race));
+                                    }
+                                }
+                            }
+                        }
+                    }
             }
 
             uint32 entry = data->id1;
@@ -598,8 +671,32 @@ public:
             {
                 Map::PlayerList const& players = instance->GetPlayers();
                 if (!players.IsEmpty())
-                    if (Player* player = players.begin()->GetSource())
-                        TeamIdInInstance = player->GetTeamId();
+                    if (Player* player = players.begin()->GetSource()) {
+                        if (!player->GetGroup()) {
+                            TeamIdInInstance = player->GetTeamId();
+                            if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                player->SetFactionForRace(player->getRace());
+                            }
+                        } else {
+                            // Handle group logic
+                            Player* leader = ObjectAccessor::FindPlayer(player->GetGroup()->GetLeaderGUID());
+                            if (leader) {
+                                TeamIdInInstance = leader->GetTeamId();
+                                if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                    player->SetFaction(leader->GetFaction());
+                                }
+                            } else {
+                                // Fallback to character cache if leader is not online
+                                CharacterCacheEntry const* playerData = sCharacterCache->GetCharacterCacheByGuid(player->GetGroup()->GetLeaderGUID());
+                                if (playerData) {
+                                    TeamIdInInstance = Player::TeamIdForRace(playerData->Race);
+                                    if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                        player->SetFaction(Player::TeamIdForRace(playerData->Race));
+                                    }
+                                }
+                            }
+                        }
+                    }
             }
 
             switch (entry)
@@ -702,8 +799,32 @@ public:
             {
                 Map::PlayerList const& players = instance->GetPlayers();
                 if (!players.IsEmpty())
-                    if (Player* player = players.begin()->GetSource())
-                        TeamIdInInstance = player->GetTeamId();
+                    if (Player* player = players.begin()->GetSource()) {
+                        if (!player->GetGroup()) {
+                            TeamIdInInstance = player->GetTeamId();
+                            if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                player->SetFactionForRace(player->getRace());
+                            }
+                        } else {
+                            // Handle group logic
+                            Player* leader = ObjectAccessor::FindPlayer(player->GetGroup()->GetLeaderGUID());
+                            if (leader) {
+                                TeamIdInInstance = leader->GetTeamId();
+                                if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                    player->SetFaction(leader->GetFaction());
+                                }
+                            } else {
+                                // Fallback to character cache if leader is not online
+                                CharacterCacheEntry const* playerData = sCharacterCache->GetCharacterCacheByGuid(player->GetGroup()->GetLeaderGUID());
+                                if (playerData) {
+                                    TeamIdInInstance = Player::TeamIdForRace(playerData->Race);
+                                    if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_GROUP)) {
+                                        player->SetFaction(Player::TeamIdForRace(playerData->Race));
+                                    }
+                                }
+                            }
+                        }
+                    }
             }
 
             switch (go->GetEntry())
